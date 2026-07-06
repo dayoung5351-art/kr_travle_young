@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>여행 스탬프 · 대한민국 방문 기록</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Serif+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- Header -->
+    <header class="topbar">
+      <div class="topbar-title">
+        <span class="topbar-eyebrow">TRAVEL LOG · KOREA</span>
+        <h1>여행 스탬프</h1>
+      </div>
+      <button id="btnAllRecords" class="stamp-btn" aria-label="전체 기록 보기">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="4" width="18" height="17" rx="1.5"/>
+          <path d="M3 9h18M8 2v4M16 2v4"/>
+        </svg>
+        전체 기록
+      </button>
+    </header>
+
+    <p class="hint">지역을 <b>탭</b>하면 방문 색이 칠해져요 · <b>더블탭</b>하면 기록을 남길 수 있어요 · 손가락으로 <b>확대/축소·드래그</b>가 가능해요</p>
+
+    <!-- Map -->
+    <main class="map-wrap">
+      <div id="mapLoading" class="map-loading">지도를 펼치는 중…</div>
+      <svg id="mapSvg" viewBox="0 0 760 900" preserveAspectRatio="xMidYMid meet" aria-label="대한민국 시군구 지도"></svg>
+    </main>
+
+    <footer class="stats">
+      <span id="statVisited">0</span>개 지역 방문 ·
+      <span id="statRecords">0</span>개의 기록
+    </footer>
+  </div>
+
+  <!-- Bottom sheet: single region memo -->
+  <div id="sheetOverlay" class="overlay"></div>
+  <section id="bottomSheet" class="bottom-sheet" aria-hidden="true">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div>
+        <span class="sheet-eyebrow">REGION</span>
+        <h2 id="sheetRegionName">지역명</h2>
+      </div>
+      <button id="btnCloseSheet" class="icon-btn" aria-label="닫기">✕</button>
+    </div>
+
+    <form id="recordForm" class="record-form">
+      <label class="field">
+        <span>방문 날짜</span>
+        <input type="date" id="inputDate" required />
+      </label>
+      <label class="field">
+        <span>메모</span>
+        <textarea id="inputMemo" rows="2" placeholder="이곳에서의 기억을 짧게 남겨보세요"></textarea>
+      </label>
+      <button type="submit" class="save-btn">기록 저장</button>
+    </form>
+
+    <div class="record-list-wrap">
+      <div class="record-list-title">이 지역의 기록 (날짜순)</div>
+      <ul id="recordList" class="record-list"></ul>
+      <p id="recordEmpty" class="record-empty">아직 기록이 없어요. 첫 기록을 남겨보세요.</p>
+    </div>
+  </section>
+
+  <!-- Full-screen: all records -->
+  <section id="allRecordsModal" class="all-modal" aria-hidden="true">
+    <div class="all-modal-header">
+      <span class="sheet-eyebrow">ALL LOGS</span>
+      <h2>모든 기록</h2>
+      <button id="btnCloseAll" class="icon-btn" aria-label="닫기">✕</button>
+    </div>
+    <div id="allRecordsBody" class="all-modal-body"></div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
