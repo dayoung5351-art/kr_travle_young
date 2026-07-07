@@ -18,20 +18,33 @@ const METRO_CODES = {
   "29": "세종특별자치시"
 };
 
-// ============ Storage ============
-// shape: { [regionId]: { name, marked: bool, records: [{id, date, memo}] } }
-let store = loadStore();
+// ============ Storage (Firebase Realtime Database, 모두 공유) ============
+const firebaseConfig = {
+  apiKey: "AIzaSyCw_Lg9pD8WmjG272QlN-N9tNsGHu8vzd4",
+  authDomain: "kr-travle-young.firebaseapp.com",
+  databaseURL: "https://kr-travle-young-default-rtdb.firebaseio.com",
+  projectId: "kr-travle-young",
+  storageBucket: "kr-travle-young.firebasestorage.app",
+  messagingSenderId: "435947302304",
+  appId: "1:435947302304:web:1c89aff10e6a568b38c8c5",
+  measurementId: "G-GFVVSD6S5N"
+};
+firebase.initializeApp(firebaseConfig);
+const storeRef = firebase.database().ref("store");
 
-function loadStore(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  }catch(e){ return {}; }
-}
+// shape: { [regionId]: { name, marked: bool, records: [{id, date, memo}] } }
+let store = {};
+
 function saveStore(){
-  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); }
-  catch(e){ /* storage unavailable, continue in-memory only */ }
+  storeRef.set(store).catch(err => console.error("저장 실패:", err));
 }
+
+// 실시간 동기화: 누군가 기록을 저장하면 다른 사람 화면도 자동 갱신됨
+storeRef.on("value", (snapshot) => {
+  store = snapshot.val() || {};
+  applyAllStates();
+  if(activeRegionId) renderRecordList();
+});
 function getRegion(id, name){
   if(!store[id]) store[id] = { name, marked: false, records: [] };
   return store[id];
