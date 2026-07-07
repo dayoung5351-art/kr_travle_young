@@ -167,8 +167,6 @@ d3.json(MAP_URL).then(topo => {
     .on("zoom", (event) => {
       viewport.attr("transform", event.transform);
       const invK = 1 / event.transform.k;
-      labelLayer.selectAll("g.label-g")
-        .attr("transform", d => `translate(${d.cx},${d.cy}) scale(${invK})`);
       stampLayer.selectAll("g.stamp-mark")
         .attr("transform", d => `translate(${d.cx},${d.cy}) rotate(${d.rot}) scale(${invK})`);
     });
