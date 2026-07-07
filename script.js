@@ -142,7 +142,7 @@ d3.json(MAP_URL).then(topo => {
     const isMetro = !!METRO_CODES[f.properties.code.slice(0,2)] && f.properties.code.endsWith("000");
     const baseFontSize = isMetro
       ? 12
-      : Math.max(6, Math.min(11, Math.sqrt(area) / 6));
+      : Math.max(3.3, Math.min(9, Math.sqrt(area) / 8));
     labelData.push({ id: f.properties.code, name: f.properties.name, cx, cy, baseFontSize });
   });
 
