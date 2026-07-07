@@ -70,6 +70,7 @@ const statVisited = document.getElementById("statVisited");
 const statRecords = document.getElementById("statRecords");
 
 let activeRegionId = null;
+let activeRegionName = null;
 let applyAllStates = () => {};
 
 // ============ Map loading & rendering ============
@@ -244,6 +245,7 @@ function updateStats(){
 // ============ Bottom sheet ============
 function openSheet(id, name){
   activeRegionId = id;
+  activeRegionName = name;
   getRegion(id, name);
   sheetRegionName.textContent = name;
   inputDate.value = "";
@@ -266,7 +268,7 @@ recordForm.addEventListener("submit", (e) => {
   e.preventDefault();
   if(!activeRegionId) return;
   if(!inputDate.value) return;
-  const region = store[activeRegionId];
+  const region = getRegion(activeRegionId, activeRegionName);
   region.records.push({
     id: "r" + Date.now(),
     date: inputDate.value,
@@ -282,7 +284,8 @@ recordForm.addEventListener("submit", (e) => {
 });
 
 function renderRecordList(){
-  const region = store[activeRegionId];
+  if(!activeRegionId) return;
+  const region = getRegion(activeRegionId, activeRegionName);
   const records = (region && region.records ? region.records.slice() : [])
     .sort((a,b) => a.date.localeCompare(b.date));
   recordList.innerHTML = "";
