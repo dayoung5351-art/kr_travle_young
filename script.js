@@ -22,7 +22,7 @@ const METRO_CODES = {
 const firebaseConfig = {
   apiKey: "AIzaSyCw_Lg9pD8WmjG272QlN-N9tNsGHu8vzd4",
   authDomain: "kr-travle-young.firebaseapp.com",
-  databaseURL: "https://kr-travle-young-default-rtdb.firebaseio.com",
+  databaseURL: "https://kr-travle-young-default-rtdb.firebaseio.com/",
   projectId: "kr-travle-young",
   storageBucket: "kr-travle-young.firebasestorage.app",
   messagingSenderId: "435947302304",
