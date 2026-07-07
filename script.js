@@ -91,19 +91,48 @@ d3.json(MAP_URL).then(topo => {
       soloGeometries.push(g);
     }
   });
+function commonPrefix(strings){
+  if(!strings.length) return "";
+  let prefix = strings[0];
+  for(let i = 1; i < strings.length; i++){
+    let j = 0;
+    while(j < prefix.length && j < strings[i].length && prefix[j] === strings[i][j]) j++;
+    prefix = prefix.slice(0, j);
+  }
+  return prefix;
+}
+const features = [];
+Object.keys(metroGroups).forEach(sido => {
+  const mergedGeom = topojson.merge(topo, metroGroups[sido]);
+  features.push({
+    type: "Feature",
+    properties: { name: METRO_CODES[sido], code: sido + "000" },
+    geometry: mergedGeom
+  });
+});
 
-  const features = [];
-  Object.keys(metroGroups).forEach(sido => {
-    const mergedGeom = topojson.merge(topo, metroGroups[sido]);
+// 코드 앞 4자리가 같은(=같은 시에 속한 구) 지역들을 하나로 합침
+const cityGroups = {};
+soloGeometries.forEach(g => {
+  const code = (g.properties && g.properties.code) || "";
+  const key = code.slice(0, 4);
+  (cityGroups[key] = cityGroups[key] || []).push(g);
+});
+
+Object.keys(cityGroups).forEach(key => {
+  const group = cityGroups[key];
+  if(group.length > 1){
+    const mergedGeom = topojson.merge(topo, group);
+    const name = commonPrefix(group.map(g => g.properties.name)) || group[0].properties.name;
     features.push({
       type: "Feature",
-      properties: { name: METRO_CODES[sido], code: sido + "000" },
+      properties: { name, code: key + "0" },
       geometry: mergedGeom
     });
-  });
-  soloGeometries.forEach(g => {
-    features.push(topojson.feature(topo, g));
-  });
+  }else{
+    features.push(topojson.feature(topo, group[0]));
+  }
+});
 
   const geo = { type: "FeatureCollection", features };
 
@@ -141,7 +170,7 @@ d3.json(MAP_URL).then(topo => {
     if(!isFinite(cx) || !isFinite(cy) || area < 10) return;
     const isMetro = !!METRO_CODES[f.properties.code.slice(0,2)] && f.properties.code.endsWith("000");
     const baseFontSize = isMetro
-      ? 12
+      ? 8
       : Math.max(2, Math.min(7, Math.sqrt(area) / 10));
     labelData.push({ id: f.properties.code, name: f.properties.name, cx, cy, baseFontSize });
   });
